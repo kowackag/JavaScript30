@@ -10,12 +10,53 @@
   <form class="search-form">
     <input type="text" class="search" placeholder="City or State">
     <ul class="suggestions">
-      <li>Filter for a city</li>
-      <li>or a state</li>
     </ul>
   </form>
 <script>
-const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+
+  const ulEl = document.querySelector('.suggestions');
+
+  function init () {
+    const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+    const inputEl = document.querySelector('.search');
+    inputEl.addEventListener('input', (e)=>getCities(e, endpoint))
+  }
+
+  function getCities(e, url) {
+    const inputValue = e.target.value;
+    const promise = fetch(url);
+    promise
+      .then(resp => {
+        if (resp.ok){
+          return resp.json();
+        } 
+        return Promise.reject(resp)
+      })
+      .then(item=>searchCities(inputValue, item))
+      .catch(err=>console.log(err))
+  }
+
+  function searchCities (value, items) {
+    const regex = new RegExp(value, 'gi');
+    const searchedCities = items.filter(({city, state}) => city.match(regex) || state.match(regex));
+    displayList(value, searchedCities);
+  }
+
+  function displayList(value, list) {
+    ulEl.innerHTML = "";
+    const regex = new RegExp(value, 'gi')
+    list.map( element => {
+      const {city, population, state} = element;
+      const cityElement = document.createElement('li');
+      const markedCity = city.replace(regex, `<span class="hl">${value}</span>`);
+      const markedState = state.replace(regex, `<span class="hl">${value}</span>`);
+      cityElement.innerHTML = `<span class="name">${markedCity}, ${markedState}</span>
+        <span class="population">${population}</span>`
+      ulEl.appendChild(cityElement)
+    })
+  }
+
+init()
 
 </script>
 </body>
