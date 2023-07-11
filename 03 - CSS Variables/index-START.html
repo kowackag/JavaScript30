@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Scoped CSS Variables and JS</title>
 </head>
+
 <body>
   <h2>Update CSS Variables with <span class='hl'>JS</span></h2>
 
@@ -21,7 +23,6 @@
   <img src="https://source.unsplash.com/7bwQXzbF6KE/800x500">
 
   <style>
-
     /*
       misc styles, nothing to do with CSS variables
     */
@@ -39,13 +40,44 @@
       margin-bottom: 50px;
     }
 
+    img {
+      padding: var(--spacing)
+    }
+
     input {
       width: 100px;
     }
   </style>
 
   <script>
+    const blurInput = document.getElementById('blur');
+    const spacingInput = document.getElementById('spacing');
+    const colorInput = document.getElementById('base');
+    const img = document.getElementsByTagName('img').item(0);
+
+    function changePadding() {
+      img.style.padding = `${this.value}px`;
+    }
+
+    function changeColor() {
+      img.style.backgroundColor = this.value;
+    }
+
+    function changeFilter() {
+      img.style.filter = `blur(${this.value}px)`;
+    }
+
+    spacingInput.addEventListener('change', changePadding);
+    spacingInput.addEventListener('mousemove', changePadding);
+
+    blurInput.addEventListener('change', changeFilter);
+    blurInput.addEventListener('mousemove', changeFilter);
+
+    colorInput.addEventListener('change', changeColor);
+    colorInput.addEventListener('mousemove', changeColor);
+
   </script>
 
 </body>
+
 </html>
